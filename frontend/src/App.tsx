@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { TamilVoiceChatbot } from './components/TamilVoiceChatbot';
-import { DashboardPage } from './pages/DashboardPage';
 import { BeforeAfterAnalysisPage } from './pages/BeforeAfterAnalysisPage';
 import { LandUsePage } from './pages/LandUsePage';
 import { FloodDetectionPage } from './pages/FloodDetectionPage';
@@ -152,7 +151,7 @@ function App() {
             onSelectRegion={(regId) => {
               if (regions.some(r => r.id === regId)) {
                 setSelectedRegionId(regId);
-                setCurrentTab('dashboard');
+                setCurrentTab('flood_monitoring');
               }
             }}
           />
@@ -175,19 +174,6 @@ function App() {
 
       case 'flood_monitoring':
         return <RealTimeFloodIntelligencePage />;
-
-      case 'dashboard':
-        return (
-          <DashboardPage
-            region={selectedRegion}
-            analysis={analysis}
-            rainfall={rainfall}
-            digitalTwinState={digitalTwinState}
-            alerts={alerts}
-            onNavigateToTab={setCurrentTab}
-            onOpenReportModal={() => handleGenerateReport('PDF')}
-          />
-        );
       case 'before_after':
         return (
           <BeforeAfterAnalysisPage
@@ -339,7 +325,7 @@ function App() {
         );
 
       default:
-        return <DashboardPage region={selectedRegion} analysis={analysis} rainfall={rainfall} digitalTwinState={digitalTwinState} alerts={alerts} onNavigateToTab={setCurrentTab} onOpenReportModal={() => handleGenerateReport('PDF')} />;
+        return <RealTimeFloodIntelligencePage />;
     }
   };
 

@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  LayoutDashboard,
   SplitSquareVertical,
   Layers,
   Droplets,
@@ -38,7 +37,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab, alert
       items: [
         { id: 'flood_monitoring', label: 'Flood Intelligence (Live)', icon: Radio, badge: '2026' },
         { id: 'land_use', label: 'Land Use & Change (AI)', icon: Layers, badge: 'CA-Markov' },
-        { id: 'dashboard', label: 'Digital Twin Dashboard', icon: LayoutDashboard },
       ]
     },
     {
