@@ -240,10 +240,10 @@ class LandUseIntelligenceService:
     ) -> Tuple[Path, str, np.ndarray]:
         """
         Synthesizes the real-time post-disaster satellite observation image by applying
-        locality-specific Sentinel-1 SAR flood inundation pathways and microwave specular
-        suppression onto the authentic Google Satellite baseline imagery.
+        locality-specific localized water stagnation pockets, depression pools, and active
+        waterlogging hotspot dots (NO straight lines or continuous waves) within the boundary area.
         """
-        filename = f"google_sat_after_{loc_key}_{pair_id}.png"
+        filename = f"google_sat_after_v2_{loc_key}_{pair_id}.png"
         out_path = settings.PROCESSED_DIR / filename
         display_url = f"/data/processed/{filename}"
 
@@ -257,83 +257,125 @@ class LandUseIntelligenceService:
 
         nh_id = (resolved_loc.get("id") or "").lower()
         loc_name = (resolved_loc.get("name") or "").lower()
+        bbox = resolved_loc.get("bbox") or [12.9, 80.1, 13.1, 80.3]
+        min_lat, min_lon, max_lat, max_lon = bbox
 
-        if "tnagar" in nh_id or "mambalam" in loc_name:
-            # Mambalam canal corridor traversing T. Nagar + low-lying road ponding
-            pts = np.array([[int(w*0.15), 0], [int(w*0.35), int(h*0.4)], [int(w*0.62), int(h*0.72)], [int(w*0.82), h]], np.int32)
-            cv2.polylines(flood_mask, [pts], False, 255, thickness=int(w*0.09))
-            cv2.circle(flood_mask, (int(w*0.42), int(h*0.46)), int(w*0.12), 255, -1)
-            cv2.circle(flood_mask, (int(w*0.68), int(h*0.32)), int(w*0.09), 255, -1)
-            cv2.circle(flood_mask, (int(w*0.32), int(h*0.78)), int(w*0.10), 255, -1)
-        elif "velachery" in nh_id or "velachery" in loc_name:
-            # Pallikaranai marsh fringe & Velachery lake overbank flow
-            pts = np.array([[0, int(h*0.55)], [int(w*0.4), int(h*0.65)], [int(w*0.75), int(h*0.82)], [w, h]], np.int32)
-            cv2.polylines(flood_mask, [pts], False, 255, thickness=int(w*0.14))
-            cv2.circle(flood_mask, (int(w*0.52), int(h*0.5)), int(w*0.15), 255, -1)
-            cv2.circle(flood_mask, (int(w*0.78), int(h*0.68)), int(w*0.12), 255, -1)
-        elif "adyar" in nh_id or "adyar" in loc_name:
-            # Adyar river estuarine corridor & Kotturpuram
-            pts = np.array([[0, int(h*0.42)], [int(w*0.35), int(h*0.48)], [int(w*0.7), int(h*0.44)], [w, int(h*0.52)]], np.int32)
-            cv2.polylines(flood_mask, [pts], False, 255, thickness=int(w*0.16))
-            cv2.circle(flood_mask, (int(w*0.4), int(h*0.36)), int(w*0.12), 255, -1)
-        elif "tambaram" in nh_id or "tambaram" in loc_name:
-            # Mudichur lowlands & Adyar headwater overflow
-            cv2.circle(flood_mask, (int(w*0.35), int(h*0.6)), int(w*0.22), 255, -1)
-            pts = np.array([[0, int(h*0.3)], [int(w*0.5), int(h*0.55)], [w, int(h*0.7)]], np.int32)
-            cv2.polylines(flood_mask, [pts], False, 255, thickness=int(w*0.09))
-        elif "cbe" in nh_id or "coimbatore" in loc_name or "noyyal" in nh_id:
-            # Noyyal river corridor & Ukkadam / Singanallur tank basins
-            pts = np.array([[0, int(h*0.48)], [int(w*0.45), int(h*0.52)], [int(w*0.75), int(h*0.46)], [w, int(h*0.55)]], np.int32)
-            cv2.polylines(flood_mask, [pts], False, 255, thickness=int(w*0.12))
-            cv2.circle(flood_mask, (int(w*0.38), int(h*0.58)), int(w*0.14), 255, -1)
-            cv2.circle(flood_mask, (int(w*0.72), int(h*0.42)), int(w*0.11), 255, -1)
-        elif "cuddalore" in nh_id or "cuddalore" in loc_name or "cud_" in nh_id:
-            # Gadilam & Pennaiyar delta channels
-            pts1 = np.array([[0, int(h*0.35)], [int(w*0.5), int(h*0.4)], [w, int(h*0.45)]], np.int32)
-            pts2 = np.array([[0, int(h*0.7)], [int(w*0.5), int(h*0.65)], [w, int(h*0.6)]], np.int32)
-            cv2.polylines(flood_mask, [pts1], False, 255, thickness=int(w*0.12))
-            cv2.polylines(flood_mask, [pts2], False, 255, thickness=int(w*0.10))
-            cv2.circle(flood_mask, (int(w*0.6), int(h*0.5)), int(w*0.18), 255, -1)
-        elif "tvm" in nh_id or "tiruvannamalai" in loc_name or "girivalam" in nh_id:
-            # Girivalam circular ring road depression & Cheyyar runoff channel
-            pts = np.array([[int(w*0.2), 0], [int(w*0.45), int(h*0.48)], [int(w*0.55), int(h*0.75)], [int(w*0.8), h]], np.int32)
-            cv2.polylines(flood_mask, [pts], False, 255, thickness=int(w*0.11))
-            cv2.circle(flood_mask, (int(w*0.48), int(h*0.45)), int(w*0.15), 255, -1)
-        elif "mdu" in nh_id or "madurai" in loc_name or "vaigai" in nh_id:
-            # Vaigai river course and Goripalayam / Vandiyur flood path
-            pts = np.array([[0, int(h*0.45)], [int(w*0.4), int(h*0.5)], [int(w*0.75), int(h*0.48)], [w, int(h*0.52)]], np.int32)
-            cv2.polylines(flood_mask, [pts], False, 255, thickness=int(w*0.15))
-            cv2.circle(flood_mask, (int(w*0.65), int(h*0.55)), int(w*0.14), 255, -1)
-        elif "pdy" in nh_id or "puducherry" in loc_name or "white_town" in nh_id:
-            # Promenade coastal fringe & Sankaraparani river basin
-            pts = np.array([[int(w*0.75), 0], [int(w*0.78), int(h*0.5)], [int(w*0.82), h]], np.int32)
-            cv2.polylines(flood_mask, [pts], False, 255, thickness=int(w*0.16))
-            cv2.circle(flood_mask, (int(w*0.45), int(h*0.65)), int(w*0.13), 255, -1)
-        elif "krk" in nh_id or "karaikal" in loc_name or "arasalar" in nh_id:
-            # Arasalar river estuary & Karaikal port basin
-            pts = np.array([[0, int(h*0.52)], [int(w*0.55), int(h*0.5)], [w, int(h*0.55)]], np.int32)
-            cv2.polylines(flood_mask, [pts], False, 255, thickness=int(w*0.15))
-            cv2.circle(flood_mask, (int(w*0.75), int(h*0.52)), int(w*0.18), 255, -1)
+        # Helper to project (lat, lon) to pixel (px, py)
+        def latlon_to_pixel(lat: float, lon: float) -> Tuple[int, int]:
+            norm_x = (lon - min_lon) / max((max_lon - min_lon), 1e-5)
+            norm_y = (max_lat - lat) / max((max_lat - min_lat), 1e-5)
+            px = int(np.clip(norm_x * (w - 1), 0.08 * w, 0.92 * w))
+            py = int(np.clip(norm_y * (h - 1), 0.08 * h, 0.92 * h))
+            return px, py
+
+        # Helper to draw an organic stagnation puddle/dot cluster (no straight lines)
+        def draw_stagnation_dot(center_x: int, center_y: int, radius_x: int, radius_y: int, angle: int = 0):
+            # Main stagnation pool dot
+            cv2.ellipse(flood_mask, (center_x, center_y), (radius_x, radius_y), angle, 0, 360, 255, -1)
+            # 1-2 smaller localized sub-pockets / satellite puddles right next to it
+            ox1 = int(radius_x * 0.6 * np.cos(np.radians(angle + 35)))
+            oy1 = int(radius_y * 0.6 * np.sin(np.radians(angle + 35)))
+            r1 = max(int(radius_x * 0.55), 6)
+            cv2.ellipse(flood_mask, (center_x + ox1, center_y + oy1), (r1, max(int(r1 * 0.7), 4)), angle + 45, 0, 360, 255, -1)
+            
+            ox2 = int(radius_x * 0.5 * np.cos(np.radians(angle - 120)))
+            oy2 = int(radius_y * 0.5 * np.sin(np.radians(angle - 120)))
+            r2 = max(int(radius_x * 0.45), 5)
+            cv2.ellipse(flood_mask, (center_x + ox2, center_y + oy2), (r2, max(int(r2 * 0.7), 4)), angle - 30, 0, 360, 255, -1)
+
+        # 1. Project actual statutory waterlogging hotspots as high-severity water stagnation dots
+        hotspots = resolved_loc.get("waterlogging_hotspots", [])
+        for hs in hotspots:
+            hs_lat = hs.get("lat")
+            hs_lon = hs.get("lon")
+            if hs_lat is not None and hs_lon is not None:
+                px, py = latlon_to_pixel(hs_lat, hs_lon)
+                depth = hs.get("water_depth_cm", 40)
+                rx = int(np.clip(w * (0.04 + (depth / 100.0) * 0.04), 16, 40))
+                ry = int(rx * 0.72)
+                angle = int((px * 17 + py * 23) % 180)
+                draw_stagnation_dot(px, py, rx, ry, angle)
+
+        # 2. Add dispersed localized micro-depression stagnation dots tailored to each locality
+        seed_val = abs(hash(f"{loc_key}_{pair_id}")) % 100000
+        rng = np.random.default_rng(seed_val)
+
+        # Locality-specific center anchors (low-lying micro-catchments & depression nodes)
+        if "tnagar" in nh_id:
+            centers = [
+                (0.32, 0.45), (0.42, 0.52), (0.58, 0.38), (0.68, 0.62),
+                (0.25, 0.72), (0.78, 0.44), (0.48, 0.28), (0.36, 0.82)
+            ]
+        elif "velachery" in nh_id:
+            centers = [
+                (0.45, 0.65), (0.55, 0.48), (0.68, 0.72), (0.35, 0.58),
+                (0.72, 0.38), (0.28, 0.68), (0.62, 0.82), (0.50, 0.32)
+            ]
+        elif "cbe" in nh_id or "coimbatore" in loc_name:
+            centers = [
+                (0.38, 0.52), (0.48, 0.42), (0.62, 0.58), (0.28, 0.64),
+                (0.70, 0.46), (0.52, 0.74), (0.42, 0.32), (0.64, 0.28)
+            ]
+        elif "cud" in nh_id or "cuddalore" in loc_name:
+            centers = [
+                (0.55, 0.42), (0.65, 0.58), (0.42, 0.68), (0.72, 0.35),
+                (0.32, 0.48), (0.58, 0.78), (0.78, 0.52), (0.46, 0.30)
+            ]
+        elif "tvm" in nh_id or "tiruvannamalai" in loc_name:
+            centers = [
+                (0.48, 0.45), (0.38, 0.58), (0.58, 0.38), (0.62, 0.64),
+                (0.30, 0.42), (0.68, 0.52), (0.42, 0.72), (0.52, 0.26)
+            ]
+        elif "mdu" in nh_id or "madurai" in loc_name:
+            centers = [
+                (0.52, 0.48), (0.42, 0.58), (0.64, 0.42), (0.34, 0.62),
+                (0.70, 0.54), (0.48, 0.72), (0.58, 0.28), (0.28, 0.46)
+            ]
+        elif "pdy" in nh_id or "puducherry" in loc_name:
+            centers = [
+                (0.72, 0.45), (0.65, 0.62), (0.48, 0.52), (0.78, 0.32),
+                (0.38, 0.68), (0.58, 0.74), (0.42, 0.38), (0.68, 0.78)
+            ]
+        elif "krk" in nh_id or "karaikal" in loc_name:
+            centers = [
+                (0.68, 0.48), (0.58, 0.58), (0.74, 0.36), (0.45, 0.64),
+                (0.35, 0.52), (0.62, 0.72), (0.78, 0.62), (0.50, 0.34)
+            ]
         else:
-            # Generic drainage network based on luminance / natural contours
-            gray = cv2.cvtColor(img_before, cv2.COLOR_BGR2GRAY)
-            low_thresh = np.percentile(gray, 25)
-            dark_mask = (gray < low_thresh).astype(np.uint8) * 255
-            kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (15, 15))
-            dilated = cv2.dilate(dark_mask, kernel, iterations=2)
-            pts = np.array([[int(w*0.1), 0], [int(w*0.4), int(h*0.5)], [int(w*0.75), h]], np.int32)
-            cv2.polylines(flood_mask, [pts], False, 255, thickness=int(w*0.08))
-            cv2.circle(flood_mask, (int(w*0.5), int(h*0.5)), int(w*0.12), 255, -1)
-            flood_mask = cv2.bitwise_or(flood_mask, cv2.bitwise_and(dilated, 255))
+            centers = [
+                (0.40, 0.45), (0.55, 0.55), (0.65, 0.40), (0.35, 0.60),
+                (0.68, 0.65), (0.30, 0.40), (0.50, 0.70), (0.45, 0.30)
+            ]
 
-        flood_mask = cv2.GaussianBlur(flood_mask, (25, 25), 0)
+        # Draw each localized stagnation dot
+        for cx_pct, cy_pct in centers:
+            jx = cx_pct + float(rng.uniform(-0.04, 0.04))
+            jy = cy_pct + float(rng.uniform(-0.04, 0.04))
+            px = int(np.clip(jx * w, 0.08 * w, 0.92 * w))
+            py = int(np.clip(jy * h, 0.08 * h, 0.92 * h))
+
+            rx = int(rng.uniform(14, 32))
+            ry = int(rx * float(rng.uniform(0.62, 0.85)))
+            ang = int(rng.uniform(0, 180))
+            draw_stagnation_dot(px, py, rx, ry, ang)
+
+        # 3. Micro-puddles: 8-15 small localized dots (radius 5-12px)
+        num_micro = rng.integers(8, 16)
+        for _ in range(num_micro):
+            mx = int(rng.uniform(0.10 * w, 0.90 * w))
+            my = int(rng.uniform(0.10 * h, 0.90 * h))
+            mr = int(rng.uniform(5, 12))
+            cv2.circle(flood_mask, (mx, my), mr, 255, -1)
+
+        # Natural edge feathering: smooth Gaussian blur so edges look like genuine water
+        flood_mask = cv2.GaussianBlur(flood_mask, (15, 15), 0)
         flood_alpha = (flood_mask.astype(np.float32) / 255.0)[:, :, np.newaxis]
 
-        # Realistic turbid flood water layer with microwave backscatter absorption
+        # Realistic turbid muddy monsoonal stormwater layer
         flood_water_layer = np.zeros_like(img_before, dtype=np.float32)
-        flood_water_layer[:, :] = [135.0, 85.0, 38.0]  # BGR
+        flood_water_layer[:, :] = [128.0, 80.0, 36.0]  # BGR
 
-        blend_factor = 0.78 * flood_alpha
+        blend_factor = 0.82 * flood_alpha
         img_after = (img_before.astype(np.float32) * (1.0 - blend_factor) + flood_water_layer * blend_factor).astype(np.uint8)
 
         cv2.imwrite(str(out_path), img_after)
