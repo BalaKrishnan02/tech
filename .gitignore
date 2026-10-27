@@ -47,6 +47,10 @@ htmlcov/
 .tox/
 .nox/
 
+# ML Models (re-generated on first load)
+models/*.pkl
+*.pkl
+
 # Database files
 *.db
 *.sqlite

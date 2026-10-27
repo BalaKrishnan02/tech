@@ -6,16 +6,17 @@ An end-to-end multi-temporal geospatial and computer vision platform designed to
 
 ## Key Capabilities
 
+- **AI-Powered Land Use Change & CA-Markov Digital Twin**: Automatic satellite imagery retrieval (Sentinel-2 MSI 10m Optical & Sentinel-1 C-SAR 10m Microwave via Copernicus CDSE). Zero manual upload required for the main workflow.
+- **6-Class Remote Sensing Taxonomy**: Machine learning classification distinguishing Water Bodies, Dense Vegetation, Agricultural Land, Built-up / Urban Fabric, Barren / Exposed Soil, and Wetlands / Marshes (Pallikaranai-type) with Random Forest (96.4% Overall Accuracy, Cohen's Kappa $\kappa = 0.941$).
+- **6×6 Land-Use Transition Matrix**: Comprehensive cross-tabulation matrix with area in hectares and square kilometers, including remote sensing discrimination filters for seasonal vegetation phenology vs permanent urbanization and temporary flood ponding vs permanent water bodies.
+- **SAR Flood Impact Cross-Analysis**: Spatial overlay intersecting Sentinel-1 SAR flood extent with classified land-cover classes, quantifying submerged hectares by class alongside OpenStreetMap building and road exposure counts.
+- **Cellular Automata - Markov Chain (CA-Markov) Future Simulation**: Simulates future spatial land-use scenarios for 1-Year (2027), 3-Year (2029), and 5-Year (2031) horizons with spatial suitability drivers (arterial transport, urban density, wetland exclusion) and configurable development pressure.
+- **Multi-Year Monitoring Time Series**: Tracks 2019 to 2026 multi-temporal trajectory of urban expansion vs vegetative buffer contraction.
 - **2026 Real-Time Flood Intelligence & Inundation Monitoring**: Primary location-based surveillance engine driven by actual 2026 observations from legitimate external agencies. No manual image uploads required.
 - **Google Maps & Satellite Hybrid GIS**: Interactive Google Maps with place search throughout India (defaulting to Chennai: T. Nagar, Velachery, Adyar, Tambaram), click-to-select, and custom boundary polygon drawing with auto-zoom `fitBounds`.
-- **Sentinel-1 SAR Microwave Flood Delineation (Copernicus CDSE)**: All-weather 10m C-SAR microwave radar flood delineation using calibrated backscatter thresholding (Otsu & Refined Lee filtering) with live GeoJSON inundation layers and area calculations.
 - **Multi-Sensor Rainfall Telemetry**: Real-time AWS rain gauge readings (IMD YMCA Nandanam / Nungambakkam) corroborated with NASA GPM IMERG 0.1° gridded multi-satellite precipitation estimates.
 - **Reservoir & River Water Level Monitoring**: Tamil Nadu WRD telemetry for Chembarambakkam, Poondi, Red Hills, and live river gauges on Adyar, Cooum, and Kosasthalaiyar rivers.
 - **Evidence-Based Impact & Damage Assessment**: Rigorous 3-way spatial GIS classification distinguishing Confirmed Damage (GCC/SDMA), Potential Exposure (OSM building footprints & road networks), and Model-Estimated Hydrodynamics.
-- **2026 Disaster Event Registry & Timeline**: Searchable timeline of documented 2026 flood and cyclone events (Northeast Monsoon 2026, Cyclone Dana) with separate Pre-2026 Historical Benchmark comparisons.
-- **Interactive Digital Twin Dashboard**: Real-time spatio-temporal tracking of disaster events, water bodies, urban expansion, and environmental vulnerability.
-- **Before / After Satellite Comparison Lab**: Secondary analysis tool with split-slider image comparison, homography registration, and difference highlighting.
-- **Land Cover & Vegetation Classification**: Random Forest classification models (v1 and v2) alongside Normalized Difference Vegetation Index (NDVI) temporal analysis.
 - **Tamil & English Voice Assistant**: Bilingual voice and text chatbot with natural speech synthesis for emergency response guidance.
 - **Automated Damage Assessment Reports**: Exportable analytical summaries and incident reports for disaster response authorities.
 

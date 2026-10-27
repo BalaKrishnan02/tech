@@ -37,6 +37,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab, alert
       title: '2026 Real-Time Surveillance',
       items: [
         { id: 'flood_monitoring', label: 'Flood Intelligence (Live)', icon: Radio, badge: '2026' },
+        { id: 'land_use', label: 'Land Use & Change (AI)', icon: Layers, badge: 'CA-Markov' },
         { id: 'dashboard', label: 'Digital Twin Dashboard', icon: LayoutDashboard },
       ]
     },
@@ -53,7 +54,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab, alert
       title: 'Secondary Analysis Labs',
       items: [
         { id: 'before_after', label: 'Before/After Analysis Lab', icon: SplitSquareVertical },
-        { id: 'land_use', label: 'Land Use Classification', icon: Layers },
         { id: 'flood', label: 'Optical Water Indices', icon: Droplets },
         { id: 'rainfall', label: 'Rainfall & IMD Normals', icon: CloudRain },
         { id: 'alerts', label: 'Alerts', icon: Bell, badge: alertCount && alertCount > 0 ? alertCount : undefined },

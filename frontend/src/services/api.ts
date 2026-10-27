@@ -5,7 +5,8 @@ import type {
   StateInfo, DistrictInfo, NationalOverview,
   SatelliteProduct, HistoricalEvent, EventEvidenceAssembly,
   MultiYearTrend, UserProfile, ProjectWorkspace,
-  AnalysisHistoryItem, SupportedLocationsResponse, FloodIntelligencePackage
+  AnalysisHistoryItem, SupportedLocationsResponse, FloodIntelligencePackage,
+  LandUseIntelligencePackage, SatelliteObservationPair
 } from '../types';
 
 const API_BASE = 'http://localhost:8000/api/v1';
@@ -535,6 +536,54 @@ export const api = {
       body: JSON.stringify({ geometry, name: name || 'Custom Area' })
     });
     if (!res.ok) throw new Error('Custom polygon flood assessment failed');
+    return res.json();
+  },
+
+  // -------------------------------------------------------------
+  // AI-POWERED LAND USE CHANGE & FLOOD IMPACT DIGITAL TWIN
+  // -------------------------------------------------------------
+  async getLandUsePackage(params: {
+    state_code?: string;
+    district_code?: string;
+    neighborhood_id?: string;
+    pair_id?: string;
+    development_pressure?: number;
+  }): Promise<LandUseIntelligencePackage> {
+    const q = new URLSearchParams();
+    if (params.state_code) q.append('state_code', params.state_code);
+    if (params.district_code) q.append('district_code', params.district_code);
+    if (params.neighborhood_id) q.append('neighborhood_id', params.neighborhood_id);
+    if (params.pair_id) q.append('pair_id', params.pair_id);
+    if (params.development_pressure !== undefined) q.append('development_pressure', params.development_pressure.toString());
+
+    const res = await fetch(`${API_BASE}/land-cover/package?${q.toString()}`);
+    if (!res.ok) throw new Error('Failed to fetch land-use intelligence package');
+    return res.json();
+  },
+
+  async getLandUseSatelliteCatalog(): Promise<SatelliteObservationPair[]> {
+    const res = await fetch(`${API_BASE}/land-cover/satellite-catalog`);
+    if (!res.ok) throw new Error('Failed to fetch satellite pairs catalog');
+    return res.json();
+  },
+
+  async assessCustomPolygonLandUse(
+    geojson: any,
+    pair_id: string = 'pair_2026_monsoon_surge',
+    development_pressure: number = 1.0
+  ): Promise<LandUseIntelligencePackage> {
+    const res = await fetch(`${API_BASE}/land-cover/custom-polygon`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ geojson, pair_id, development_pressure })
+    });
+    if (!res.ok) throw new Error('Failed to assess custom polygon land use');
+    return res.json();
+  },
+
+  async getLandUseModelSpecs(): Promise<any> {
+    const res = await fetch(`${API_BASE}/land-cover/model-specs`);
+    if (!res.ok) throw new Error('Failed to fetch model specifications');
     return res.json();
   }
 };

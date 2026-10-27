@@ -712,6 +712,181 @@ export interface SupportedLocationsResponse {
   neighborhoods: NeighborhoodOption[];
 }
 
+// -------------------------------------------------------------
+// MODULE 8: AI-POWERED LAND USE CHANGE & FLOOD IMPACT DIGITAL TWIN
+// -------------------------------------------------------------
+export interface SatelliteObservationMeta {
+  mission: string;
+  processing_level: string;
+  sensor_type: string;
+  acquisition_date: string;
+  cloud_cover_percent: number;
+  spatial_resolution: string;
+  spectral_bands: string;
+  source_agency: string;
+  file_path: string;
+  display_url: string;
+}
+
+export interface SatelliteObservationPair {
+  pair_id: string;
+  title: string;
+  category: string;
+  recommended: boolean;
+  event_context: string;
+  pre_observation: SatelliteObservationMeta;
+  post_observation: SatelliteObservationMeta;
+}
+
+export interface ClassBreakdownItem {
+  class_id: number;
+  name: string;
+  color_hex: string;
+  baseline_percent: number;
+  baseline_sqkm: number;
+  baseline_hectares: number;
+  post_event_percent: number;
+  post_event_sqkm: number;
+  post_event_hectares: number;
+  delta_percent: number;
+  delta_hectares: number;
+  trend: 'increased' | 'decreased' | 'stable';
+}
+
+export interface TransitionCell {
+  pixels: number;
+  area_sqkm: number;
+  area_hectares: number;
+  percent: number;
+}
+
+export interface TransitionMatrixItem {
+  from_class: string;
+  to_class: string;
+  area_sqkm: number;
+  area_hectares: number;
+  percent_of_total: number;
+  is_conversion: boolean;
+}
+
+export interface TransitionMatrixPackage {
+  table: Record<string, Record<string, TransitionCell>>;
+  transitions_list: TransitionMatrixItem[];
+  key_conversions: {
+    vegetation_to_built_up_hectares: number;
+    agriculture_to_built_up_hectares: number;
+    built_up_inundation_hectares: number;
+    vegetation_inundation_hectares: number;
+    wetland_loss_hectares: number;
+    built_up_inundation_percent: number;
+  };
+  discrimination_notes: {
+    seasonal_vegetation_phenology_detected: boolean;
+    phenology_explanation: string;
+    temporary_inundation_vs_permanent_water: string;
+    cloud_shadow_artifacts_filtered: boolean;
+  };
+}
+
+export interface CAMarkovScenario {
+  target_year: number;
+  horizon_label: string;
+  class_proportions: Record<string, { percent: number; area_hectares: number; area_sqkm: number; color: string }>;
+  raster_filename: string;
+  raster_url: string;
+  built_up_expansion_hectares: number;
+  vegetation_loss_hectares: number;
+}
+
+export interface CAMarkovProjections {
+  model_type: string;
+  base_observation_year: number;
+  transition_probability_matrix: number[][];
+  classes: string[];
+  scenarios: Record<string, CAMarkovScenario>;
+  methodology_notes: {
+    algorithm: string;
+    spatial_drivers: string;
+    validation_status: string;
+    disclaimer: string;
+  };
+}
+
+export interface LandUseFloodImpactPackage {
+  satellite_radar_sensor: string;
+  radar_acquisition_date: string;
+  flood_detection_algorithm: string;
+  inundation_summary: {
+    total_inundated_area_hectares: number;
+    total_inundated_area_sqkm: number;
+    inundation_percentage_of_locality: number;
+  };
+  land_cover_classes_submerged: Array<{
+    class: string;
+    submerged_hectares: number;
+    share_of_flood: number;
+  }>;
+  infrastructure_exposure_estimates: {
+    potentially_exposed_buildings: number;
+    potentially_affected_road_segments_km: number;
+    critical_facilities_in_proximity?: Array<{
+      name: string;
+      type: string;
+      lat: number;
+      lon: number;
+      elevation_m?: number;
+    }>;
+  };
+  evidence_classification: {
+    observed_inundation: string;
+    potential_exposure: string;
+    confirmed_damage: string;
+    statutory_caution: string;
+  };
+}
+
+export interface LandUseIntelligencePackage {
+  location: LocationResolved;
+  satellite_pair: SatelliteObservationPair;
+  available_pairs: SatelliteObservationPair[];
+  class_breakdown: ClassBreakdownItem[];
+  transition_matrix: TransitionMatrixPackage;
+  classification_rasters: {
+    before_raster_url: string;
+    after_raster_url: string;
+  };
+  flood_impact_analysis: LandUseFloodImpactPackage;
+  multi_year_timeseries: Array<{
+    year: number;
+    observation_date: string;
+    built_up_percent: number;
+    vegetation_percent: number;
+    water_percent: number;
+    agricultural_percent: number;
+    sensor: string;
+  }>;
+  camarkov_projections: CAMarkovProjections;
+  model_specifications: {
+    classifier_name: string;
+    validation_accuracy: number;
+    cohen_kappa_coefficient: number;
+    overall_quality: string;
+    input_bands_and_indices: Array<{
+      band?: string;
+      index?: string;
+      formula?: string;
+      role?: string;
+      wavelength?: string;
+      name?: string;
+    }>;
+    training_samples: number;
+    validation_samples: number;
+    limitations_and_assumptions: string[];
+  };
+  last_evaluated_timestamp: string;
+  data_freshness: string;
+}
+
 export const TYPES_LOADED = true;
 
 

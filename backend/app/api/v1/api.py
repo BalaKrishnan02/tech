@@ -4,10 +4,13 @@ from backend.app.api.v1.endpoints import (
     health, regions, images, analysis, rainfall,
     digital_twin, alerts, chatbot, voice, reports, jobs,
     auth, geography, satellite, events, multi_year, portal,
-    flood_intelligence
+    flood_intelligence, land_cover
 )
 
 api_router = APIRouter()
+
+# AI-Powered Land Use Change & Flood Impact Digital Twin
+api_router.include_router(land_cover.router, prefix="/land-cover", tags=["AI-Powered Land Use Change & Prediction Engine"])
 
 # Primary Location-Based Flood Monitoring (2026 Engine)
 api_router.include_router(flood_intelligence.router, prefix="/flood-intelligence", tags=["2026 Location-Based Flood Intelligence"])
