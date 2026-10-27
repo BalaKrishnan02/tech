@@ -565,40 +565,6 @@ export const RealTimeFloodIntelligencePage: React.FC = () => {
         </div>
       )}
 
-      {/* ─── ACTIVE STATUTORY FLOOD WARNING BANNER ─── */}
-      {sit && sit.active_warnings && sit.active_warnings.length > 0 && (
-        <div className="bg-gradient-to-r from-rose-900/90 via-red-900/80 to-amber-900/90 border border-rose-700 p-4 rounded-2xl shadow-lg text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-xl bg-rose-600 text-white flex items-center justify-center shrink-0 shadow-md">
-              <ShieldAlert className="w-6 h-6 animate-pulse" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="bg-rose-500 text-white font-black text-[10px] uppercase px-2 py-0.5 rounded tracking-wider shadow-sm">
-                  {sit.active_warnings[0].severity} ALERT ACTIVE
-                </span>
-                <span className="text-[11px] text-rose-200 font-mono">
-                  {sit.active_warnings[0].bulletin_id}
-                </span>
-                <span className="text-[10px] text-rose-300">
-                  • Valid until {new Date(sit.active_warnings[0].valid_until).toLocaleDateString()}
-                </span>
-              </div>
-              <h2 className="text-sm md:text-base font-bold text-white mt-0.5">
-                {sit.active_warnings[0].title}
-              </h2>
-              <p className="text-xs text-rose-100/90 mt-0.5 leading-relaxed">
-                {sit.active_warnings[0].summary}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="text-[10px] font-mono bg-black/40 px-2.5 py-1 rounded-lg border border-white/10 text-rose-200">
-              Agency: {sit.active_warnings[0].issuing_agency}
-            </span>
-          </div>
-        </div>
-      )}
 
       {/* ─── MAIN INTERACTIVE GOOGLE MAP & SATELLITE HYBRID VIEWER ─── */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-md overflow-hidden">

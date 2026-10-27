@@ -1,29 +1,24 @@
 import React from 'react';
 import type { Region } from '../types';
-import { RefreshCw, MapPin, Database, CheckCircle2, Bot, Volume2 } from 'lucide-react';
+import { RefreshCw, Database, CheckCircle2, Bot, Volume2 } from 'lucide-react';
 
 interface HeaderProps {
-  regions: Region[];
-  selectedRegionId: string;
-  onSelectRegion: (id: string) => void;
+  regions?: Region[];
+  selectedRegionId?: string;
+  onSelectRegion?: (id: string) => void;
   onRefresh: () => void;
   isRefreshing: boolean;
   onOpenVoiceChat: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  regions,
-  selectedRegionId,
-  onSelectRegion,
   onRefresh,
   isRefreshing,
   onOpenVoiceChat
 }) => {
-  const currentRegion = regions.find(r => r.id === selectedRegionId) || regions[0];
-
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-30 px-6 py-3.5 flex flex-wrap items-center justify-between gap-4 shadow-sm">
-      {/* Title & Region Selector */}
+      {/* Title & Branding */}
       <div className="flex items-center gap-4 flex-wrap">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-cyan-500/30 shadow-md shadow-cyan-500/10 bg-slate-950 flex items-center justify-center">
@@ -40,22 +35,6 @@ export const Header: React.FC<HeaderProps> = ({
               Multi-Temporal Satellite & Hydrological Decision-Support Framework
             </p>
           </div>
-        </div>
-
-        {/* Region Dropdown */}
-        <div className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200/80 px-3 py-1.5 rounded-lg border border-slate-200 transition-colors">
-          <MapPin className="w-4 h-4 text-blue-600 shrink-0" />
-          <select
-            value={selectedRegionId}
-            onChange={(e) => onSelectRegion(e.target.value)}
-            className="bg-transparent text-xs font-semibold text-slate-800 focus:outline-none cursor-pointer pr-2"
-          >
-            {regions.map(r => (
-              <option key={r.id} value={r.id}>
-                {r.name}
-              </option>
-            ))}
-          </select>
         </div>
       </div>
 
