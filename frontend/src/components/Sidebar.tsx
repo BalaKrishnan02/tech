@@ -9,8 +9,7 @@ import {
   Radio,
   TrendingUp,
   History,
-  Bell,
-  Waves
+  Bell
 } from 'lucide-react';
 import { EarthSatellite3D } from './EarthSatellite3D';
 
@@ -37,7 +36,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab, alert
     {
       title: '2026 Real-Time Surveillance',
       items: [
-        { id: 'flood_intelligence_2026', label: '2026 Flood Intelligence', icon: Waves, badge: 'LIVE' },
+        { id: 'flood_monitoring', label: 'Flood Intelligence (Live)', icon: Radio, badge: '2026' },
+        { id: 'dashboard', label: 'Digital Twin Dashboard', icon: LayoutDashboard },
       ]
     },
     {
@@ -50,12 +50,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab, alert
       ]
     },
     {
-      title: 'Basin Digital Twin',
+      title: 'Secondary Analysis Labs',
       items: [
-        { id: 'dashboard', label: 'Dashboard Overview', icon: LayoutDashboard },
-        { id: 'before_after', label: 'Before/After Analysis', icon: SplitSquareVertical },
+        { id: 'before_after', label: 'Before/After Analysis Lab', icon: SplitSquareVertical },
         { id: 'land_use', label: 'Land Use Classification', icon: Layers },
-        { id: 'flood', label: 'Flood Change Detection', icon: Droplets },
+        { id: 'flood', label: 'Optical Water Indices', icon: Droplets },
         { id: 'rainfall', label: 'Rainfall & IMD Normals', icon: CloudRain },
         { id: 'alerts', label: 'Alerts', icon: Bell, badge: alertCount && alertCount > 0 ? alertCount : undefined },
       ]

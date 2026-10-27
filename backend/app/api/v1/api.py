@@ -9,8 +9,8 @@ from backend.app.api.v1.endpoints import (
 
 api_router = APIRouter()
 
-# Primary 2026 Real-Time Flood Intelligence & Damage Assessment Service
-api_router.include_router(flood_intelligence.router, prefix="/flood-intelligence", tags=["2026 Real-Time Flood Intelligence & Damage Assessment"])
+# Primary Location-Based Flood Monitoring (2026 Engine)
+api_router.include_router(flood_intelligence.router, prefix="/flood-intelligence", tags=["2026 Location-Based Flood Intelligence"])
 
 # Core Services & Existing Functionality
 api_router.include_router(health.router, prefix="/health", tags=["Health"])

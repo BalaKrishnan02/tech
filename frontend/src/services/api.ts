@@ -5,7 +5,7 @@ import type {
   StateInfo, DistrictInfo, NationalOverview,
   SatelliteProduct, HistoricalEvent, EventEvidenceAssembly,
   MultiYearTrend, UserProfile, ProjectWorkspace,
-  AnalysisHistoryItem
+  AnalysisHistoryItem, SupportedLocationsResponse, FloodIntelligencePackage
 } from '../types';
 
 const API_BASE = 'http://localhost:8000/api/v1';
@@ -494,61 +494,47 @@ export const api = {
     return res.json();
   },
 
-  // 2026 Real-Time Flood Intelligence & Damage Assessment APIs
-  async getPresetLocalities(): Promise<any[]> {
-    const res = await fetch(`${API_BASE}/flood-intelligence/localities`, { headers: getHeaders() });
-    if (!res.ok) throw new Error('Failed to fetch localities');
+  // -------------------------------------------------------------
+  // PRIMARY 2026 LOCATION-BASED FLOOD INTELLIGENCE & SAR
+  // -------------------------------------------------------------
+  async getFloodLocations(): Promise<SupportedLocationsResponse> {
+    const res = await fetch(`${API_BASE}/flood-intelligence/locations`);
+    if (!res.ok) throw new Error('Failed to fetch supported flood monitoring locations');
     return res.json();
   },
 
-  async getCurrentFloodIntelligence(locality: string = 't_nagar', lat: number = 13.0418, lng: number = 80.2341): Promise<any> {
-    const res = await fetch(`${API_BASE}/flood-intelligence/current?locality=${encodeURIComponent(locality)}&lat=${lat}&lng=${lng}`, { headers: getHeaders() });
-    if (!res.ok) throw new Error('Failed to fetch current flood intelligence');
+  async searchFloodLocations(query: string): Promise<any[]> {
+    const res = await fetch(`${API_BASE}/flood-intelligence/search?query=${encodeURIComponent(query)}`);
+    if (!res.ok) throw new Error('Location search failed');
     return res.json();
   },
 
-  async detectSatelliteFlood(payload: { lat: number; lng: number; radius_km?: number; locality_name?: string; custom_polygon?: any }): Promise<any> {
-    const res = await fetch(`${API_BASE}/flood-intelligence/satellite-detect`, {
+  async getFloodMonitoring(params: {
+    state_code?: string;
+    district_code?: string;
+    neighborhood_id?: string;
+    lat?: number;
+    lon?: number;
+  }): Promise<FloodIntelligencePackage> {
+    const q = new URLSearchParams();
+    if (params.state_code) q.append('state_code', params.state_code);
+    if (params.district_code) q.append('district_code', params.district_code);
+    if (params.neighborhood_id) q.append('neighborhood_id', params.neighborhood_id);
+    if (params.lat !== undefined) q.append('lat', params.lat.toString());
+    if (params.lon !== undefined) q.append('lon', params.lon.toString());
+
+    const res = await fetch(`${API_BASE}/flood-intelligence/monitor?${q.toString()}`);
+    if (!res.ok) throw new Error('Failed to fetch real-time flood monitoring data');
+    return res.json();
+  },
+
+  async assessCustomPolygon(geometry: any, name?: string): Promise<FloodIntelligencePackage> {
+    const res = await fetch(`${API_BASE}/flood-intelligence/custom-polygon`, {
       method: 'POST',
-      headers: getHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify(payload)
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ geometry, name: name || 'Custom Area' })
     });
-    if (!res.ok) throw new Error('Satellite flood detection failed');
-    return res.json();
-  },
-
-  async assessFloodDamage(payload: { locality: string; inundated_hectares: number; inundation_percentage: number; hazard_level: string }): Promise<any> {
-    const res = await fetch(`${API_BASE}/flood-intelligence/damage-assessment`, {
-      method: 'POST',
-      headers: getHeaders({ 'Content-Type': 'application/json' }),
-      body: JSON.stringify(payload)
-    });
-    if (!res.ok) throw new Error('Damage assessment failed');
-    return res.json();
-  },
-
-  async get2026Events(params?: { state?: string; district?: string; event_type?: string; severity?: string; query?: string }): Promise<any> {
-    const queryParts = [];
-    if (params?.state) queryParts.push(`state=${encodeURIComponent(params.state)}`);
-    if (params?.district) queryParts.push(`district=${encodeURIComponent(params.district)}`);
-    if (params?.event_type) queryParts.push(`event_type=${encodeURIComponent(params.event_type)}`);
-    if (params?.severity) queryParts.push(`severity=${encodeURIComponent(params.severity)}`);
-    if (params?.query) queryParts.push(`query=${encodeURIComponent(params.query)}`);
-    const qs = queryParts.length ? `?${queryParts.join('&')}` : '';
-    const res = await fetch(`${API_BASE}/flood-intelligence/events-2026${qs}`, { headers: getHeaders() });
-    if (!res.ok) throw new Error('Failed to fetch 2026 events');
-    return res.json();
-  },
-
-  async getHistoricalBenchmarks(): Promise<any> {
-    const res = await fetch(`${API_BASE}/flood-intelligence/historical-benchmarks`, { headers: getHeaders() });
-    if (!res.ok) throw new Error('Failed to fetch historical benchmarks');
-    return res.json();
-  },
-
-  async getFloodSources(): Promise<any> {
-    const res = await fetch(`${API_BASE}/flood-intelligence/sources`, { headers: getHeaders() });
-    if (!res.ok) throw new Error('Failed to fetch flood sources');
+    if (!res.ok) throw new Error('Custom polygon flood assessment failed');
     return res.json();
   }
 };
