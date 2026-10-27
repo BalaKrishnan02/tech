@@ -1,19 +1,17 @@
 import React from 'react';
 import type { Region } from '../types';
-import { RefreshCw, Database, CheckCircle2, Bot, Volume2 } from 'lucide-react';
+import { Database, CheckCircle2, Bot, Volume2 } from 'lucide-react';
 
 interface HeaderProps {
   regions?: Region[];
   selectedRegionId?: string;
   onSelectRegion?: (id: string) => void;
-  onRefresh: () => void;
-  isRefreshing: boolean;
+  onRefresh?: () => void;
+  isRefreshing?: boolean;
   onOpenVoiceChat: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
-  onRefresh,
-  isRefreshing,
   onOpenVoiceChat
 }) => {
   return (
@@ -54,17 +52,6 @@ export const Header: React.FC<HeaderProps> = ({
           <div>Updated: <span className="font-medium text-slate-700">Live (T-0)</span></div>
           <div>Processing: <span className="font-medium text-slate-700">Synchronized</span></div>
         </div>
-
-        {/* Manual Refresh Button */}
-        <button
-          onClick={onRefresh}
-          disabled={isRefreshing}
-          className="flex items-center gap-1.5 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium border border-slate-200 transition-all disabled:opacity-50"
-          title="Refresh database records"
-        >
-          <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-blue-600' : ''}`} />
-          <span>Refresh</span>
-        </button>
 
         {/* Quick Voice Bot Button */}
         <button

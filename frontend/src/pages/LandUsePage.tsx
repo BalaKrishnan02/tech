@@ -313,14 +313,6 @@ export const LandUsePage: React.FC<LandUsePageProps> = () => {
                 <span>Processing Location...</span>
               </span>
             )}
-            <button
-              onClick={() => fetchPackage(true)}
-              disabled={isLoading}
-              className="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold px-4 py-2.5 rounded-xl flex items-center gap-2 transition-all shadow-sm"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-cyan-400' : ''}`} />
-              <span>Refresh Ingestion</span>
-            </button>
           </div>
         </div>
 
