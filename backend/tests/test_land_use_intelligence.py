@@ -34,9 +34,17 @@ def test_land_use_package_tnagar_chennai():
     assert pkg["location"]["district"] == "Chennai"
     assert "boundary_geojson" in pkg["location"]
     
-    # 2. Satellite pair
+    # 2. Satellite pair (Real-Time Google Satellite and SAR Post-Flood Observation)
     assert "satellite_pair" in pkg
     assert pkg["satellite_pair"]["pre_observation"]["spatial_resolution"] == "10m Optical"
+    assert "google_sat_realtime" in pkg["satellite_pair"]["pre_observation"]["display_url"]
+    assert "google_sat_after" in pkg["satellite_pair"]["post_observation"]["display_url"]
+    
+    # 2b. Real-Time Classified Rasters
+    assert "classification_rasters" in pkg
+    assert "before_raster_url" in pkg["classification_rasters"]
+    assert "after_raster_url" in pkg["classification_rasters"]
+    assert pkg["classification_rasters"]["is_realtime"] is True
     
     # 3. 6-Class breakdown
     assert len(pkg["class_breakdown"]) == 6

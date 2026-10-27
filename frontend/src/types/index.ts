@@ -854,6 +854,10 @@ export interface LandUseIntelligencePackage {
   classification_rasters: {
     before_raster_url: string;
     after_raster_url: string;
+    is_realtime?: boolean;
+    zoom_level?: number;
+    centroid?: [number, number];
+    satellite_provider?: string;
   };
   flood_impact_analysis: LandUseFloodImpactPackage;
   multi_year_timeseries: Array<{

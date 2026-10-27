@@ -194,6 +194,69 @@ CHENNAI_NEIGHBORHOODS = [
         ],
         "nearest_aws": "IMD Nungambakkam AWS (Station ID: 43278)",
         "aws_distance_km": 3.8
+    },
+    {
+        "id": "cuddalore",
+        "name": "Cuddalore Delta & Port Corridor",
+        "district": "Cuddalore",
+        "district_code": "CUD",
+        "state": "Tamil Nadu",
+        "state_code": "TN",
+        "centroid": [11.7480, 79.7714],
+        "bbox": [11.7000, 79.7200, 11.7900, 79.8100],
+        "area_sqkm": 12.4,
+        "type": "neighborhood",
+        "vulnerability_profile": "Gadilam and Pennaiyar delta convergence; highly vulnerable to cyclonic storm surges and coastal riverine overbank flood discharges.",
+        "boundary_geojson": {
+            "type": "Polygon",
+            "coordinates": [[
+                [79.7250, 11.7100],
+                [79.8050, 11.7120],
+                [79.8080, 11.7850],
+                [79.7350, 11.7820],
+                [79.7250, 11.7100]
+            ]]
+        },
+        "critical_facilities": [
+            {"name": "Cuddalore District Headquarter Government Hospital", "type": "Hospital", "lat": 11.7510, "lon": 79.7680, "elevation_m": 4.5},
+            {"name": "Old Town Port Cyclone Shelter", "type": "Cyclone Shelter", "lat": 11.7380, "lon": 79.7760, "elevation_m": 3.8}
+        ],
+        "waterlogging_hotspots": [
+            {"id": "WL-CD-01", "name": "OT Beach Road", "lat": 11.7410, "lon": 79.7740, "water_depth_cm": 55, "status": "COASTAL SURGE WARNING", "pumps_active": 3, "capacity_hp": 250}
+        ],
+        "nearest_aws": "IMD AWS Cuddalore Port",
+        "aws_distance_km": 1.8
+    },
+    {
+        "id": "madurai_vaigai",
+        "name": "Madurai Vaigai Riverfront Corridor",
+        "district": "Madurai",
+        "district_code": "MDU",
+        "state": "Tamil Nadu",
+        "state_code": "TN",
+        "centroid": [9.9252, 78.1198],
+        "bbox": [9.8900, 78.0800, 9.9600, 78.1600],
+        "area_sqkm": 10.8,
+        "type": "neighborhood",
+        "vulnerability_profile": "Vaigai river urban course traversing dense commercial core; sensitive to Vaigai Dam surplus releases and stormwater trunk drain backwater.",
+        "boundary_geojson": {
+            "type": "Polygon",
+            "coordinates": [[
+                [78.0850, 9.8950],
+                [78.1550, 9.8980],
+                [78.1580, 9.9550],
+                [78.0880, 9.9520],
+                [78.0850, 9.8950]
+            ]]
+        },
+        "critical_facilities": [
+            {"name": "Madurai Government Rajaji Hospital", "type": "Hospital", "lat": 9.9320, "lon": 78.1310, "elevation_m": 136.0}
+        ],
+        "waterlogging_hotspots": [
+            {"id": "WL-MD-01", "name": "Simmakkal Causeway", "lat": 9.9270, "lon": 78.1230, "water_depth_cm": 40, "status": "RIVERBANK CAUTION", "pumps_active": 2, "capacity_hp": 150}
+        ],
+        "nearest_aws": "IMD Madurai Airport AWS",
+        "aws_distance_km": 9.5
     }
 ]
 

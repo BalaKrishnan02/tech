@@ -6,6 +6,7 @@ import joblib
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, confusion_matrix, cohen_kappa_score
 import uuid
+from concurrent.futures import ThreadPoolExecutor
 
 from backend.app.core.config import settings
 
@@ -22,6 +23,8 @@ LAND_COVER_CLASSES = {
 MODEL_PATH = settings.MODELS_DIR / "random_forest_land_cover_v3.pkl"
 
 class LandCoverService:
+    _cached_model = None
+
     @classmethod
     def detect_scene_context(cls, image_bgr: np.ndarray) -> Dict[str, Any]:
         """
@@ -223,9 +226,15 @@ class LandCoverService:
 
     @classmethod
     def get_or_load_model(cls) -> RandomForestClassifier:
-        if not MODEL_PATH.exists():
-            cls.train_baseline_model()
-        return joblib.load(MODEL_PATH)
+        if cls._cached_model is None:
+            if not MODEL_PATH.exists():
+                cls.train_baseline_model()
+            cls._cached_model = joblib.load(MODEL_PATH)
+            try:
+                cls._cached_model.n_jobs = -1
+            except Exception:
+                pass
+        return cls._cached_model
 
     @classmethod
     def classify_image(
@@ -236,17 +245,26 @@ class LandCoverService:
         """
         Classifies an input image with multi-spectral features and spatial context awareness.
         If the scene is an urban / city environment, false agricultural classifications are eliminated.
+        Accelerated via antialiased feature sampling and discrete nearest-neighbor reconstruction.
         """
         model = cls.get_or_load_model()
-        h, w = image_bgr.shape[:2]
+        orig_h, orig_w = image_bgr.shape[:2]
 
         # 1. Detect Scene Context (Urban vs Rural)
         context = cls.detect_scene_context(image_bgr)
         is_urban = context["is_urban"]
 
-        # 2. Extract Spectral Features
-        b, g, r = cv2.split(image_bgr.astype(np.float32))
-        hsv = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2HSV)
+        # 2. Downsample feature space to (256, 256) for high-speed inference (4x fewer pixels)
+        if orig_h > 256 or orig_w > 256:
+            proc_img = cv2.resize(image_bgr, (256, 256), interpolation=cv2.INTER_AREA)
+        else:
+            proc_img = image_bgr
+
+        h, w = proc_img.shape[:2]
+
+        # 3. Extract Spectral Features
+        b, g, r = cv2.split(proc_img.astype(np.float32))
+        hsv = cv2.cvtColor(proc_img, cv2.COLOR_BGR2HSV)
         _, s, v = cv2.split(hsv.astype(np.float32))
 
         ndwi = (g - r) / (g + r + 1e-4)
@@ -267,7 +285,7 @@ class LandCoverService:
         pred_labels = model.predict(features)
         class_grid = pred_labels.reshape((h, w))
 
-        # 3. Context-Aware Grounding (Strict Zero-Farmland in Cities)
+        # 4. Context-Aware Grounding (Strict Zero-Farmland in Cities)
         if is_urban:
             agri_mask = (class_grid == 2)
             green_urban_mask = agri_mask & (vari > 0.16)
@@ -275,6 +293,10 @@ class LandCoverService:
 
             class_grid[green_urban_mask] = 1  # Urban Green Canopy
             class_grid[built_urban_mask] = 3  # Built-up / Urban
+
+        # 5. Restore full resolution discrete class grid if downsampled
+        if (orig_h, orig_w) != (h, w):
+            class_grid = cv2.resize(class_grid, (orig_w, orig_h), interpolation=cv2.INTER_NEAREST)
 
         total_px = h * w
         proportions = {}
@@ -341,6 +363,7 @@ class LandCoverService:
         # Key observed transitions
         veg_to_built_px = int(np.count_nonzero((grid_before == 1) & (grid_after == 3)))
         agri_to_built_px = int(np.count_nonzero((grid_before == 2) & (grid_after == 3)))
+        agri_to_water_px = int(np.count_nonzero((grid_before == 2) & (grid_after == 0)))
         built_to_water_px = int(np.count_nonzero((grid_before == 3) & (grid_after == 0)))
         veg_to_water_px = int(np.count_nonzero((grid_before == 1) & (grid_after == 0)))
         wetland_loss_px = int(np.count_nonzero((grid_before == 5) & (grid_after != 5)))
@@ -356,6 +379,7 @@ class LandCoverService:
             "key_conversions": {
                 "vegetation_to_built_up_hectares": round(veg_to_built_px * hectares_per_px, 1),
                 "agriculture_to_built_up_hectares": round(agri_to_built_px * hectares_per_px, 1),
+                "agriculture_inundation_hectares": round(agri_to_water_px * hectares_per_px, 1),
                 "built_up_inundation_hectares": round(built_to_water_px * hectares_per_px, 1),
                 "vegetation_inundation_hectares": round(veg_to_water_px * hectares_per_px, 1),
                 "wetland_loss_hectares": round(wetland_loss_px * hectares_per_px, 1),
@@ -376,7 +400,8 @@ class LandCoverService:
         grid_final: np.ndarray,
         total_area_sqkm: float = 4.85,
         horizon_years: List[int] = [1, 3, 5],
-        development_pressure: float = 1.0
+        development_pressure: float = 1.0,
+        loc_key: str = "default"
     ) -> Dict[str, Any]:
         """
         Cellular Automata - Markov Chain (CA-Markov) Future Land-Use Simulation.
@@ -445,15 +470,14 @@ class LandCoverService:
                     "color": info["hex"]
                 }
 
-            # Render Predicted Raster
-            pred_rgb = np.zeros((h, w, 3), dtype=np.uint8)
-            for cid, info in LAND_COVER_CLASSES.items():
-                pred_rgb[sim_grid == cid] = info["color"]
-
-            run_id = str(uuid.uuid4())[:8]
-            pred_filename = f"pred_camarkov_{target_year}_{run_id}.png"
+            # Render Predicted Raster with deterministic loc_key
+            pred_filename = f"pred_camarkov_{target_year}_{loc_key}.png"
             pred_path = settings.PROCESSED_DIR / pred_filename
-            cv2.imwrite(str(pred_path), pred_rgb)
+            if not pred_path.exists():
+                pred_rgb = np.zeros((h, w, 3), dtype=np.uint8)
+                for cid, info in LAND_COVER_CLASSES.items():
+                    pred_rgb[sim_grid == cid] = info["color"]
+                cv2.imwrite(str(pred_path), pred_rgb)
 
             scenarios[f"{years}_year_projection"] = {
                 "target_year": target_year,
@@ -484,10 +508,13 @@ class LandCoverService:
         cls,
         before_file_path: str,
         after_file_path: str,
-        total_area_sqkm: float = 4.85
+        total_area_sqkm: float = 4.85,
+        loc_key: str = "default",
+        pair_id: str = "pair_2026_monsoon_surge"
     ) -> Dict[str, Any]:
         """
         Full 6-class comparative analysis between before and after observations.
+        Executes parallel Random Forest pixel classification for maximum speed.
         """
         img_b = cv2.imread(str(before_file_path))
         img_a = cv2.imread(str(after_file_path))
@@ -499,34 +526,43 @@ class LandCoverService:
         if img_b.shape[:2] != (h_a, w_a):
             img_b = cv2.resize(img_b, (w_a, h_a), interpolation=cv2.INTER_AREA)
 
-        grid_before, props_before, context_b = cls.classify_image(img_b)
-        grid_after, props_after, context_a = cls.classify_image(img_a)
+        # Run classifications in parallel
+        with ThreadPoolExecutor(max_workers=2) as executor:
+            future_b = executor.submit(cls.classify_image, img_b)
+            future_a = executor.submit(cls.classify_image, img_a)
+            grid_before, props_before, context_b = future_b.result()
+            grid_after, props_after, context_a = future_a.result()
 
         # Transition matrix
         trans_res = cls.compute_transition_matrix(grid_before, grid_after, total_area_sqkm=total_area_sqkm)
 
-        # Generate color-coded classification rasters
-        rgb_before = np.zeros((h_a, w_a, 3), dtype=np.uint8)
-        rgb_after = np.zeros((h_a, w_a, 3), dtype=np.uint8)
-        for class_id, info in LAND_COVER_CLASSES.items():
-            rgb_before[grid_before == class_id] = info["color"]
-            rgb_after[grid_after == class_id] = info["color"]
+        # Deterministic filenames for caching
+        raster_b_filename = f"lc_raster_before_{loc_key}.png"
+        raster_a_filename = f"lc_raster_after_{loc_key}_{pair_id}.png"
+        path_b = settings.PROCESSED_DIR / raster_b_filename
+        path_a = settings.PROCESSED_DIR / raster_a_filename
 
-        run_uuid = str(uuid.uuid4())[:8]
-        raster_b_filename = f"lc_before_{run_uuid}.png"
-        raster_a_filename = f"lc_after_{run_uuid}.png"
-        cv2.imwrite(str(settings.PROCESSED_DIR / raster_b_filename), rgb_before)
-        cv2.imwrite(str(settings.PROCESSED_DIR / raster_a_filename), rgb_after)
+        if not path_b.exists():
+            rgb_before = np.zeros((h_a, w_a, 3), dtype=np.uint8)
+            for class_id, info in LAND_COVER_CLASSES.items():
+                rgb_before[grid_before == class_id] = info["color"]
+            cv2.imwrite(str(path_b), rgb_before)
+
+        if not path_a.exists():
+            rgb_after = np.zeros((h_a, w_a, 3), dtype=np.uint8)
+            for class_id, info in LAND_COVER_CLASSES.items():
+                rgb_after[grid_after == class_id] = info["color"]
+            cv2.imwrite(str(path_a), rgb_after)
 
         # CA-Markov Future Projections
-        camarkov = cls.simulate_camarkov_future(grid_before, grid_after, total_area_sqkm=total_area_sqkm)
+        camarkov = cls.simulate_camarkov_future(grid_before, grid_after, total_area_sqkm=total_area_sqkm, loc_key=loc_key)
 
         return {
             "class_proportions_before": props_before,
             "class_proportions_after": props_after,
             "transition_matrix": trans_res,
             "model_version": "RandomForest_LC_v3.0_HexaClass",
-            "classification_raster_path": str(settings.PROCESSED_DIR / raster_a_filename),
+            "classification_raster_path": str(path_a),
             "classification_raster_filename": raster_a_filename,
             "classification_raster_before_filename": raster_b_filename,
             "overall_accuracy": 0.964,

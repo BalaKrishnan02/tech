@@ -34,6 +34,12 @@ app.mount("/data/samples", StaticFiles(directory=str(settings.SAMPLES_DIR)), nam
 # Include API v1 Router
 app.include_router(api_router, prefix=settings.API_V1_STR)
 
+@app.on_event("startup")
+def startup_event():
+    import threading
+    from backend.app.services.land_cover.intelligence_service import LandUseIntelligenceService
+    threading.Thread(target=LandUseIntelligenceService.warmup_cache, daemon=True).start()
+
 @app.get("/")
 def root():
     return {
