@@ -2,7 +2,6 @@ import React from 'react';
 import {
   SplitSquareVertical,
   Layers,
-  Droplets,
   CloudRain,
   Globe,
   Radio,
@@ -51,7 +50,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab, alert
       title: 'Secondary Analysis Labs',
       items: [
         { id: 'before_after', label: 'Before/After Analysis Lab', icon: SplitSquareVertical },
-        { id: 'flood', label: 'Optical Water Indices', icon: Droplets },
         { id: 'rainfall', label: 'Rainfall & IMD Normals', icon: CloudRain },
       ]
     }

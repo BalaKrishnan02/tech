@@ -4,7 +4,6 @@ import { Header } from './components/Header';
 import { TamilVoiceChatbot } from './components/TamilVoiceChatbot';
 import { BeforeAfterAnalysisPage } from './pages/BeforeAfterAnalysisPage';
 import { LandUsePage } from './pages/LandUsePage';
-import { FloodDetectionPage } from './pages/FloodDetectionPage';
 import { RainfallClimatePage } from './pages/RainfallClimatePage';
 import { NationalOverviewPage } from './pages/NationalOverviewPage';
 import { HistoricalSatellitePage } from './pages/HistoricalSatellitePage';
@@ -183,8 +182,6 @@ function App() {
         );
       case 'land_use':
         return <LandUsePage region={selectedRegion} analysis={analysis} />;
-      case 'flood':
-        return <FloodDetectionPage region={selectedRegion} analysis={analysis} />;
       case 'rainfall':
         return <RainfallClimatePage region={selectedRegion} rainfall={rainfall} />;
 
