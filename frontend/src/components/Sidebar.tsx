@@ -7,8 +7,7 @@ import {
   Globe,
   Radio,
   TrendingUp,
-  History,
-  Bell
+  History
 } from 'lucide-react';
 import { EarthSatellite3D } from './EarthSatellite3D';
 
@@ -54,7 +53,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab, alert
         { id: 'before_after', label: 'Before/After Analysis Lab', icon: SplitSquareVertical },
         { id: 'flood', label: 'Optical Water Indices', icon: Droplets },
         { id: 'rainfall', label: 'Rainfall & IMD Normals', icon: CloudRain },
-        { id: 'alerts', label: 'Alerts', icon: Bell, badge: alertCount && alertCount > 0 ? alertCount : undefined },
       ]
     }
   ];
