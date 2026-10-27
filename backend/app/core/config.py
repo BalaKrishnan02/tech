@@ -43,6 +43,8 @@ class Settings(BaseSettings):
     CDSE_CATALOG_URL: str = "https://catalogue.dataspace.copernicus.eu/odata/v1/Products"
     CDSE_STAC_URL: str = "https://catalogue.dataspace.copernicus.eu/stac"
     OPENWEATHER_API_KEY: Optional[str] = None
+    GOOGLE_MAPS_API_KEY: Optional[str] = None
+    IMD_API_KEY: Optional[str] = None
     GEMINI_API_KEY: Optional[str] = None
     OPENAI_API_KEY: Optional[str] = None
     

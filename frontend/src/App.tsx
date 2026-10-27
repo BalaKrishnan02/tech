@@ -11,6 +11,7 @@ import { NationalOverviewPage } from './pages/NationalOverviewPage';
 import { HistoricalSatellitePage } from './pages/HistoricalSatellitePage';
 import { DisasterEventsPage } from './pages/DisasterEventsPage';
 import { MultiYearAnalysisPage } from './pages/MultiYearAnalysisPage';
+import { RealTimeFloodIntelligencePage } from './pages/RealTimeFloodIntelligencePage';
 import { api, BACKEND_URL, DEFAULT_REGIONS } from './services/api';
 import type {
   Region, ComprehensiveAnalysis, RainfallDataResponse,
@@ -26,7 +27,8 @@ function App() {
   // Global State: Seeded with DEFAULT_REGIONS so UI renders immediately and never gets locked on blank loading screen
   const [regions, setRegions] = useState<Region[]>(DEFAULT_REGIONS);
   const [selectedRegionId, setSelectedRegionId] = useState<string>('chennai-basin');
-  const [currentTab, setCurrentTab] = useState<string>('dashboard');
+  // Primary Workflow: 2026 Real-Time Flood Intelligence and Damage Assessment
+  const [currentTab, setCurrentTab] = useState<string>('flood_intelligence_2026');
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   const [isBackendConnected, setIsBackendConnected] = useState<boolean>(true);
@@ -171,6 +173,9 @@ function App() {
             onSelectRegion={handleRegionChange}
           />
         );
+
+      case 'flood_intelligence_2026':
+        return <RealTimeFloodIntelligencePage />;
 
       case 'dashboard':
         return (

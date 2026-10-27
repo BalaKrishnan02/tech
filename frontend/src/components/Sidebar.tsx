@@ -9,7 +9,8 @@ import {
   Radio,
   TrendingUp,
   History,
-  Bell
+  Bell,
+  Waves
 } from 'lucide-react';
 import { EarthSatellite3D } from './EarthSatellite3D';
 
@@ -33,6 +34,12 @@ interface NavSection {
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSelectTab, alertCount }) => {
   const sections: NavSection[] = [
+    {
+      title: '2026 Real-Time Surveillance',
+      items: [
+        { id: 'flood_intelligence_2026', label: '2026 Flood Intelligence', icon: Waves, badge: 'LIVE' },
+      ]
+    },
     {
       title: 'Nationwide & Historical',
       items: [

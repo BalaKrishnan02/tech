@@ -492,5 +492,63 @@ export const api = {
     });
     if (!res.ok) throw new Error('Report generation failed');
     return res.json();
+  },
+
+  // 2026 Real-Time Flood Intelligence & Damage Assessment APIs
+  async getPresetLocalities(): Promise<any[]> {
+    const res = await fetch(`${API_BASE}/flood-intelligence/localities`, { headers: getHeaders() });
+    if (!res.ok) throw new Error('Failed to fetch localities');
+    return res.json();
+  },
+
+  async getCurrentFloodIntelligence(locality: string = 't_nagar', lat: number = 13.0418, lng: number = 80.2341): Promise<any> {
+    const res = await fetch(`${API_BASE}/flood-intelligence/current?locality=${encodeURIComponent(locality)}&lat=${lat}&lng=${lng}`, { headers: getHeaders() });
+    if (!res.ok) throw new Error('Failed to fetch current flood intelligence');
+    return res.json();
+  },
+
+  async detectSatelliteFlood(payload: { lat: number; lng: number; radius_km?: number; locality_name?: string; custom_polygon?: any }): Promise<any> {
+    const res = await fetch(`${API_BASE}/flood-intelligence/satellite-detect`, {
+      method: 'POST',
+      headers: getHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('Satellite flood detection failed');
+    return res.json();
+  },
+
+  async assessFloodDamage(payload: { locality: string; inundated_hectares: number; inundation_percentage: number; hazard_level: string }): Promise<any> {
+    const res = await fetch(`${API_BASE}/flood-intelligence/damage-assessment`, {
+      method: 'POST',
+      headers: getHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error('Damage assessment failed');
+    return res.json();
+  },
+
+  async get2026Events(params?: { state?: string; district?: string; event_type?: string; severity?: string; query?: string }): Promise<any> {
+    const queryParts = [];
+    if (params?.state) queryParts.push(`state=${encodeURIComponent(params.state)}`);
+    if (params?.district) queryParts.push(`district=${encodeURIComponent(params.district)}`);
+    if (params?.event_type) queryParts.push(`event_type=${encodeURIComponent(params.event_type)}`);
+    if (params?.severity) queryParts.push(`severity=${encodeURIComponent(params.severity)}`);
+    if (params?.query) queryParts.push(`query=${encodeURIComponent(params.query)}`);
+    const qs = queryParts.length ? `?${queryParts.join('&')}` : '';
+    const res = await fetch(`${API_BASE}/flood-intelligence/events-2026${qs}`, { headers: getHeaders() });
+    if (!res.ok) throw new Error('Failed to fetch 2026 events');
+    return res.json();
+  },
+
+  async getHistoricalBenchmarks(): Promise<any> {
+    const res = await fetch(`${API_BASE}/flood-intelligence/historical-benchmarks`, { headers: getHeaders() });
+    if (!res.ok) throw new Error('Failed to fetch historical benchmarks');
+    return res.json();
+  },
+
+  async getFloodSources(): Promise<any> {
+    const res = await fetch(`${API_BASE}/flood-intelligence/sources`, { headers: getHeaders() });
+    if (!res.ok) throw new Error('Failed to fetch flood sources');
+    return res.json();
   }
 };

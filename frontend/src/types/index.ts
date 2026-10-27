@@ -455,5 +455,299 @@ export interface AnalysisHistoryItem {
   notes?: string;
 }
 
+// -------------------------------------------------------------
+// MODULE 8: 2026 REAL-TIME FLOOD INTELLIGENCE & DAMAGE ASSESSMENT
+// -------------------------------------------------------------
+export interface DataProvenance {
+  source_name: string;
+  observation_date: string;
+  source_publication_time?: string | null;
+  last_retrieval_time: string;
+  data_period: string;
+  geographic_resolution: string;
+  verification_status: string;
+  freshness_status: string;
+  official_source_url: string;
+  limitations_notice?: string | null;
+}
+
+export interface PresetLocality {
+  id: string;
+  name: string;
+  district: string;
+  state: string;
+  lat: number;
+  lng: number;
+  zoom: number;
+  description: string;
+}
+
+export interface FloodIntelligenceCurrentResponse {
+  timestamp: string;
+  selected_location: {
+    locality_key: string;
+    locality_name: string;
+    coordinates: { lat: number; lng: number };
+    zone: string;
+    wards: string[];
+    micro_elevation_msl_m: number;
+    drainage_corridor: string;
+    stormwater_drain_network_km: number;
+    closest_rain_gauge: string;
+  };
+  system_status: {
+    status_code: string;
+    is_flood_currently_active: boolean;
+    status_statement: string;
+  };
+  official_alerts: {
+    district_warning: {
+      district: string;
+      state: string;
+      bulletin_number: string;
+      bulletin_timestamp: string;
+      synoptic_situation: string;
+      warning_level: string;
+      color_code: string;
+      expected_phenomenon: string;
+      valid_until: string;
+      official_impact_advice: string[];
+      regional_vs_neighborhood_disclaimer: string;
+      provenance: DataProvenance;
+    };
+    evacuation_advisories: Array<{
+      agency: string;
+      type: string;
+      advisory: string;
+      status: string;
+    }>;
+  };
+  rainfall_observations: {
+    ground_station_aws: {
+      target_locality: string;
+      primary_gauge: {
+        station_id: string;
+        station_name: string;
+        proximity_to_target: string;
+        distance_km: number;
+        current_temperature_c: number;
+        relative_humidity_pct: number;
+        wind_speed_kmh: number;
+        wind_direction: string;
+        precipitation_rate_mm_hr: number;
+        rainfall_accumulation_24h_mm: number;
+        rainfall_accumulation_7d_mm: number;
+        rainfall_accumulation_month_mm: number;
+        normal_monthly_baseline_mm: number;
+        departure_pct: number;
+        last_observation_time: string;
+        quality_flag: string;
+        provenance: DataProvenance;
+      };
+      all_nearby_gauges: any[];
+      summary: any;
+    };
+    satellite_gpm_imerg: {
+      product_type: string;
+      coordinates: { latitude: number; longitude: number };
+      observation_interval: string;
+      units: string;
+      spatial_resolution: string;
+      sensor_constellation: string;
+      timestamp: string;
+      measurements: {
+        instantaneous_rate_mm_hr: number;
+        accumulation_24h_mm: number;
+        accumulation_7d_mm: number;
+        satellite_vs_ground_gauge_diff_pct: number;
+        confidence_score: number;
+      };
+      satellite_vs_gauge_distinction: string;
+      provenance: DataProvenance;
+    };
+  };
+  water_levels: {
+    reservoirs: {
+      provenance: DataProvenance;
+      overall_summary: {
+        total_current_storage_mcft: number;
+        total_capacity_mcft: number;
+        combined_storage_pct: number;
+        monitored_reservoirs_count: number;
+        active_discharge_status: string;
+        flood_cushion_available_pct: number;
+      };
+      reservoirs: Array<{
+        key: string;
+        name: string;
+        current_level_ft: number;
+        full_tank_level_ft: number;
+        current_storage_mcft: number;
+        total_capacity_mcft: number;
+        storage_percentage: number;
+        inflow_cusecs: number;
+        outflow_cusecs: number;
+        status: string;
+        alert_level: string;
+        river_basin: string;
+        last_level_update: string;
+      }>;
+    };
+    river_gauges: {
+      provenance: DataProvenance;
+      gauges: Array<{
+        station_id: string;
+        river_name: string;
+        location: string;
+        coordinates: { lat: number; lng: number };
+        current_water_level_m: number;
+        warning_level_m: number;
+        danger_level_m: number;
+        safety_buffer_remaining_m: number;
+        current_discharge_cusecs: number;
+        max_channel_capacity_cusecs: number;
+        flow_status: string;
+        upstream_reservoir: string;
+        relevance: string;
+        last_observation_time: string;
+      }>;
+    };
+  };
+  micro_locality_telemetry: {
+    locality_key: string;
+    locality_name: string;
+    zone: string;
+    wards: string[];
+    center_coordinates: { lat: number; lng: number };
+    micro_elevation_msl_m: number;
+    drainage_corridor: string;
+    stormwater_drain_network_km: number;
+    pump_stations_active: number;
+    closest_rain_gauge: string;
+    hotspots: Array<{
+      name: string;
+      type: string;
+      coordinates: { lat: number; lng: number };
+      sump_pump_status: string;
+      water_depth_m: number;
+      threshold_warning_m: number;
+      traffic_status: string;
+    }>;
+    provenance: DataProvenance;
+    data_resolution_note: string;
+  };
+  recent_2026_events: any[];
+  sources_and_provenance: Record<string, DataProvenance>;
+}
+
+export interface SatelliteDetectResponse {
+  satellite_metadata: {
+    mission: string;
+    instrument: string;
+    scene_identifier: string;
+    polarization: string;
+    orbit_direction: string;
+    spatial_resolution: string;
+    acquisition_timestamp: string;
+    processing_timestamp: string;
+    processing_algorithm: string;
+    cloud_penetration_capability: string;
+    quality_flags: string;
+  };
+  selected_boundary: {
+    center: { lat: number; lng: number };
+    locality_name: string;
+    radius_km: number;
+    total_area_hectares: number;
+    bounding_box: number[];
+  };
+  inundation_summary: {
+    inundated_area_hectares: number;
+    inundated_area_sqkm: number;
+    inundation_percentage_of_selected_area: number;
+    dominant_hazard_category: string;
+    number_of_inundation_polygons: number;
+  };
+  geojson_inundation_layer: any;
+  provenance: DataProvenance;
+}
+
+export interface DamageAssessmentResponse {
+  locality_assessed: string;
+  spatial_extent: {
+    inundated_area_hectares: number;
+    inundated_area_sqkm: number;
+    inundation_percentage_of_boundary: number;
+    hazard_level: string;
+  };
+  model_estimated_exposure: {
+    potentially_exposed_buildings_count: number;
+    buildings_with_possible_ground_ingress: number;
+    commercial_retail_exposed: number;
+    residential_units_exposed: number;
+    potentially_affected_roads_km: number;
+    vulnerable_subways_count: number;
+    potentially_exposed_population: number;
+    critical_facilities_screened: Array<{
+      name: string;
+      type: string;
+      status: string;
+      indoor_safe: boolean;
+    }>;
+    exposure_estimation_methodology: string;
+  };
+  officially_confirmed_damage: {
+    verified_structural_collapses: number;
+    official_evacuation_shelters_opened: number;
+    official_human_casualties: number;
+    official_cattle_or_livestock_loss: number;
+    source_authority: string;
+    verification_notes: string;
+  };
+  reported_unverified_impacts: string[];
+  unavailable_information: string[];
+  evidence_adequacy_statement: string;
+  provenance: DataProvenance;
+}
+
+export interface DisasterEvent2026 {
+  event_id: string;
+  event_name: string;
+  event_type: string;
+  severity: string;
+  state: string;
+  districts_affected: string[];
+  localities_affected: string[];
+  start_date: string;
+  end_date: string;
+  peak_observation_date: string;
+  status: string;
+  recorded_rainfall: {
+    peak_24h_station_mm: number;
+    station_name: string;
+    storm_7d_accumulation_mm: number;
+    regional_departure_pct: number;
+  };
+  flood_extent: {
+    estimated_inundated_area_sqkm: number;
+    observation_sensor: string;
+    observation_date: string;
+  };
+  official_damage_reports: {
+    source_agency: string;
+    verified_structural_losses: string;
+    relief_camps_opened: number;
+    population_sheltered: number;
+    disruption_summary: string;
+  };
+  affected_infrastructure: string[];
+  affected_population_estimated: number;
+  original_source: string;
+  official_source_url: string;
+  verification_status: string;
+  is_2026_event: boolean;
+}
+
 export const TYPES_LOADED = true;
+
 

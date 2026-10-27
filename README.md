@@ -6,13 +6,17 @@ An end-to-end multi-temporal geospatial and computer vision platform designed to
 
 ## Key Capabilities
 
+- **2026 Real-Time Flood Intelligence & Inundation Monitoring**: Primary location-based surveillance engine driven by actual 2026 observations from legitimate external agencies.
+- **Google Maps & Satellite Hybrid GIS**: Interactive Google Maps with place search throughout India (defaulting to Chennai: T. Nagar, Velachery, Adyar, Tambaram), click-to-select, and custom boundary polygon drawing.
+- **Sentinel-1 SAR Flood Detection (Copernicus CDSE)**: All-weather 10m C-SAR microwave flood delineation using calibrated backscatter thresholding (Otsu & Lee filtering) without requiring manual before/after image uploads.
+- **Multi-Sensor Rainfall Telemetry**: Real-time AWS rain gauge readings (IMD YMCA Nandanam / Nungambakkam) corroborated with NASA GPM IMERG (0.1° gridded multi-satellite precipitation estimates).
+- **Reservoir & River Water Level Monitoring**: Tamil Nadu WRD telemetry for Chembarambakkam, Poondi, Red Hills, and live river gauges on Adyar, Cooum, and Kosasthalaiyar rivers.
+- **Evidence-Based Impact & Damage Assessment**: Rigorous 3-way spatial GIS classification distinguishing Model-Estimated Exposure, Officially Confirmed Damage (NDMA/GCC), and Transparent Gaps (Unavailable Information).
+- **2026 Disaster Event Registry**: Searchable timeline of documented 2026 flood and cyclone events (Northeast Monsoon 2026, Cyclone Dana, Krishna basin flash floods, Brahmaputra floods) with separate Pre-2026 Historical Benchmark comparisons.
 - **Interactive Digital Twin Dashboard**: Real-time spatio-temporal tracking of disaster events, water bodies, urban expansion, and environmental vulnerability.
-- **Before / After Satellite Comparison**: Split-slider image comparison with automated homography registration and difference highlighting.
-- **Automated Flood & Water Detection**: Normalized Difference Water Index (NDWI) calculation, adaptive thresholding, and submerged infrastructure estimation.
-- **Land Cover & Vegetation Classification**: Random Forest classification models (v1 and v2) alongside Normalized Difference Vegetation Index (NDVI) temporal analysis.
-- **Climate & Rainfall Tracking**: Precipitation anomalies, historical trends, and correlation with disaster inundation events.
+- **Before / After Satellite Comparison**: Split-slider image comparison with automated homography registration.
+- **Land Cover & Vegetation Classification**: Random Forest classification models (v1 and v2) alongside NDVI temporal analysis.
 - **Tamil & English Voice Assistant**: Bilingual voice and text chatbot with natural speech synthesis for emergency response guidance.
-- **Automated Damage Assessment Reports**: Exportable analytical summaries and incident reports for disaster response authorities.
 
 ---
 

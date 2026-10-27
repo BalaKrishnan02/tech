@@ -3,10 +3,14 @@ from fastapi import APIRouter
 from backend.app.api.v1.endpoints import (
     health, regions, images, analysis, rainfall,
     digital_twin, alerts, chatbot, voice, reports, jobs,
-    auth, geography, satellite, events, multi_year, portal
+    auth, geography, satellite, events, multi_year, portal,
+    flood_intelligence
 )
 
 api_router = APIRouter()
+
+# Primary 2026 Real-Time Flood Intelligence & Damage Assessment Service
+api_router.include_router(flood_intelligence.router, prefix="/flood-intelligence", tags=["2026 Real-Time Flood Intelligence & Damage Assessment"])
 
 # Core Services & Existing Functionality
 api_router.include_router(health.router, prefix="/health", tags=["Health"])
