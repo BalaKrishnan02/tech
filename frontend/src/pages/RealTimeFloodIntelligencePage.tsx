@@ -379,7 +379,7 @@ export const RealTimeFloodIntelligencePage: React.FC = () => {
               </span>
             </h1>
             <p className="text-xs text-slate-400 mt-1">
-              Select any Indian State, District, or Neighborhood — or draw a custom boundary — to inspect live AWS rainfall, reservoir discharges, Sentinel-1 SAR flood masks, and evidence-grounded damage estimates.
+              Select any Indian State, District, or Neighborhood to inspect live AWS rainfall, reservoir discharges, Sentinel-1 SAR flood masks, and evidence-grounded damage estimates.
             </p>
           </div>
 
@@ -429,7 +429,7 @@ export const RealTimeFloodIntelligencePage: React.FC = () => {
         </div>
 
         {/* ─── HIERARCHICAL LOCATION SELECTORS (State -> District -> Neighborhood) ─── */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-2 border-t border-slate-800">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 border-t border-slate-800">
           {/* 1. State Selector */}
           <div>
             <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
@@ -489,21 +489,6 @@ export const RealTimeFloodIntelligencePage: React.FC = () => {
                 ))}
             </select>
           </div>
-
-          {/* 4. Custom Polygon Drawing Mode Button */}
-          <div className="flex flex-col justify-end">
-            <button
-              onClick={handleToggleDrawingMode}
-              className={`w-full py-2 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all ${
-                isDrawingMode
-                  ? 'bg-rose-600 hover:bg-rose-700 text-white shadow-lg shadow-rose-600/30'
-                  : 'bg-cyan-600 hover:bg-cyan-500 text-white shadow-lg shadow-cyan-600/30'
-              }`}
-            >
-              <PenTool className="w-3.5 h-3.5" />
-              <span>{isDrawingMode ? 'Cancel Drawing' : 'Draw Custom Boundary'}</span>
-            </button>
-          </div>
         </div>
 
         {/* Quick Location Chips */}
@@ -537,33 +522,6 @@ export const RealTimeFloodIntelligencePage: React.FC = () => {
         </div>
       </div>
 
-      {/* ─── DRAWING MODE ACTIVE BANNER ─── */}
-      {isDrawingMode && (
-        <div className="bg-rose-950 border border-rose-800 text-rose-200 px-4 py-3 rounded-xl flex items-center justify-between text-xs animate-pulse">
-          <div className="flex items-center gap-2">
-            <PenTool className="w-4 h-4 text-rose-400" />
-            <span>
-              <b>Custom Polygon Drawing Mode:</b> Click on the map to place vertices (at least 3 points). Placed points: <b>{drawnPoints.length}</b>.
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            {drawnPoints.length >= 3 && (
-              <button
-                onClick={handleAnalyzeDrawnPolygon}
-                className="px-3 py-1 bg-rose-600 hover:bg-rose-500 text-white rounded-lg font-bold text-xs shadow-md transition-all"
-              >
-                Finish & Analyze Polygon
-              </button>
-            )}
-            <button
-              onClick={() => setDrawnPoints([])}
-              className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded text-xs"
-            >
-              Reset Points
-            </button>
-          </div>
-        </div>
-      )}
 
 
       {/* ─── MAIN INTERACTIVE GOOGLE MAP & SATELLITE HYBRID VIEWER ─── */}

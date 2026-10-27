@@ -421,41 +421,8 @@ export const LandUsePage: React.FC<LandUsePageProps> = () => {
               <span>Location Selection & Satellite Ingestion Parameters</span>
             </h2>
             <p className="text-xs text-slate-500 mt-0.5">
-              Select any Indian administrative hierarchy or define a custom bounding polygon for automated satellite retrieval.
+              Select any Indian administrative hierarchy for automated satellite retrieval and land-cover change detection.
             </p>
-          </div>
-
-          {/* Polygon Drawing Controls */}
-          <div className="flex items-center gap-2">
-            {!isDrawingCustom ? (
-              <button
-                onClick={() => setIsDrawingCustom(true)}
-                className="px-3.5 py-1.5 rounded-xl border border-blue-200 bg-blue-50 text-blue-700 text-xs font-semibold hover:bg-blue-100 flex items-center gap-1.5 transition-all shadow-2xs"
-              >
-                <PenTool className="w-3.5 h-3.5 text-blue-600" />
-                <span>Draw Custom Polygon</span>
-              </button>
-            ) : (
-              <div className="flex items-center gap-2">
-                <span className="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-lg font-medium animate-pulse">
-                  Click on map ({drawnPoints.length} points)
-                </span>
-                <button
-                  onClick={handleFinishCustomPolygon}
-                  className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold flex items-center gap-1 shadow-xs"
-                >
-                  <Check className="w-3.5 h-3.5" />
-                  <span>Finish</span>
-                </button>
-                <button
-                  onClick={handleResetPolygon}
-                  className="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold flex items-center gap-1"
-                >
-                  <RotateCcw className="w-3.5 h-3.5" />
-                  <span>Cancel</span>
-                </button>
-              </div>
-            )}
           </div>
         </div>
 
