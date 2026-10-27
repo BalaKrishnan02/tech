@@ -1,0 +1,13 @@
+{
+  "name": "disaster-twin-ai-root",
+  "version": "2.0.0",
+  "private": true,
+  "description": "AI-Powered Digital Twin Framework for Land Use Change in Disaster-Affected Regions",
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "build": "npm --prefix frontend run build",
+    "preview": "npm --prefix frontend run preview",
+    "backend": "python -m uvicorn backend.app.main:app --reload --host 127.0.0.1 --port 8000",
+    "test:backend": "python -m pytest backend/tests"
+  }
+}
