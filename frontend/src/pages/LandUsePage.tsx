@@ -330,44 +330,34 @@ export const LandUsePage: React.FC<LandUsePageProps> = () => {
             <MapPin className="w-3.5 h-3.5 text-cyan-400" /> Priority Study Sites:
           </span>
           <button
-            onClick={() => handleQuickLocality('tnagar')}
+            onClick={() => handleQuickLocality('tnagar', 'CHN', 'TN')}
             className={`px-3 py-1 rounded-lg text-xs font-medium border transition-all ${
               selectedNeighborhoodId === 'tnagar'
                 ? 'bg-cyan-500/20 border-cyan-400 text-cyan-200 shadow-xs'
                 : 'bg-slate-800/70 hover:bg-slate-700/80 border-slate-700 text-slate-300'
             }`}
           >
-            T. Nagar (Commercial Core)
+            T. Nagar (Chennai)
           </button>
           <button
-            onClick={() => handleQuickLocality('velachery')}
+            onClick={() => handleQuickLocality('velachery', 'CHN', 'TN')}
             className={`px-3 py-1 rounded-lg text-xs font-medium border transition-all ${
               selectedNeighborhoodId === 'velachery'
                 ? 'bg-cyan-500/20 border-cyan-400 text-cyan-200 shadow-xs'
                 : 'bg-slate-800/70 hover:bg-slate-700/80 border-slate-700 text-slate-300'
             }`}
           >
-            Velachery (Lake & Marsh Fringe)
+            Velachery (Chennai)
           </button>
           <button
-            onClick={() => handleQuickLocality('adyar')}
+            onClick={() => handleQuickLocality('cbe_rspuram', 'CBE', 'TN')}
             className={`px-3 py-1 rounded-lg text-xs font-medium border transition-all ${
-              selectedNeighborhoodId === 'adyar'
+              selectedNeighborhoodId === 'cbe_rspuram'
                 ? 'bg-cyan-500/20 border-cyan-400 text-cyan-200 shadow-xs'
                 : 'bg-slate-800/70 hover:bg-slate-700/80 border-slate-700 text-slate-300'
             }`}
           >
-            Adyar (Riverine Estuary)
-          </button>
-          <button
-            onClick={() => handleQuickLocality('tambaram')}
-            className={`px-3 py-1 rounded-lg text-xs font-medium border transition-all ${
-              selectedNeighborhoodId === 'tambaram'
-                ? 'bg-cyan-500/20 border-cyan-400 text-cyan-200 shadow-xs'
-                : 'bg-slate-800/70 hover:bg-slate-700/80 border-slate-700 text-slate-300'
-            }`}
-          >
-            Tambaram (Peri-Urban)
+            R.S. Puram (Coimbatore)
           </button>
           <button
             onClick={() => handleQuickLocality('cuddalore', 'CUD', 'TN')}
@@ -377,7 +367,17 @@ export const LandUsePage: React.FC<LandUsePageProps> = () => {
                 : 'bg-slate-800/70 hover:bg-slate-700/80 border-slate-700 text-slate-300'
             }`}
           >
-            Cuddalore Delta (Agrarian Floodplain)
+            Cuddalore Port & Delta
+          </button>
+          <button
+            onClick={() => handleQuickLocality('tvm_girivalam', 'TVM', 'TN')}
+            className={`px-3 py-1 rounded-lg text-xs font-medium border transition-all ${
+              selectedDistrictCode === 'TVM' || selectedNeighborhoodId === 'tvm_girivalam'
+                ? 'bg-cyan-500/20 border-cyan-400 text-cyan-200 shadow-xs'
+                : 'bg-slate-800/70 hover:bg-slate-700/80 border-slate-700 text-slate-300'
+            }`}
+          >
+            Girivalam (Tiruvannamalai)
           </button>
           <button
             onClick={() => handleQuickLocality('madurai_vaigai', 'MDU', 'TN')}
@@ -387,7 +387,27 @@ export const LandUsePage: React.FC<LandUsePageProps> = () => {
                 : 'bg-slate-800/70 hover:bg-slate-700/80 border-slate-700 text-slate-300'
             }`}
           >
-            Madurai (Vaigai Riverfront)
+            Vaigai Riverfront (Madurai)
+          </button>
+          <button
+            onClick={() => handleQuickLocality('pdy_white_town', 'PDY', 'PY')}
+            className={`px-3 py-1 rounded-lg text-xs font-medium border transition-all ${
+              selectedDistrictCode === 'PDY' || selectedNeighborhoodId === 'pdy_white_town'
+                ? 'bg-cyan-500/20 border-cyan-400 text-cyan-200 shadow-xs'
+                : 'bg-slate-800/70 hover:bg-slate-700/80 border-slate-700 text-slate-300'
+            }`}
+          >
+            White Town (Puducherry)
+          </button>
+          <button
+            onClick={() => handleQuickLocality('krk_port_coastal', 'KRK', 'PY')}
+            className={`px-3 py-1 rounded-lg text-xs font-medium border transition-all ${
+              selectedDistrictCode === 'KRK' || selectedNeighborhoodId === 'krk_port_coastal'
+                ? 'bg-cyan-500/20 border-cyan-400 text-cyan-200 shadow-xs'
+                : 'bg-slate-800/70 hover:bg-slate-700/80 border-slate-700 text-slate-300'
+            }`}
+          >
+            Karaikal Port (Coastal)
           </button>
         </div>
       </div>

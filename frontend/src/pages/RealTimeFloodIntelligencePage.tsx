@@ -272,6 +272,11 @@ export const RealTimeFloodIntelligencePage: React.FC = () => {
 
   const handleNeighborhoodChange = (id: string) => {
     setSelectedNeighborhoodId(id);
+    const target = locationsData?.neighborhoods.find(n => n.id === id);
+    if (target) {
+      if (target.state_code) setSelectedStateCode(target.state_code);
+      if (target.district_code) setSelectedDistrictCode(target.district_code);
+    }
     fetchFloodMonitoring({ neighborhood_id: id });
   };
 
@@ -475,11 +480,13 @@ export const RealTimeFloodIntelligencePage: React.FC = () => {
               className="w-full bg-slate-800 border border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-white focus:outline-none focus:ring-2 focus:ring-cyan-500 cursor-pointer"
             >
               <option value="">-- View Entire District --</option>
-              {locationsData?.neighborhoods.map((n) => (
-                <option key={n.id} value={n.id}>
-                  📍 {n.name}
-                </option>
-              ))}
+              {locationsData?.neighborhoods
+                .filter(n => (!selectedDistrictCode || n.district_code === selectedDistrictCode) && (!selectedStateCode || n.state_code === selectedStateCode))
+                .map((n) => (
+                  <option key={n.id} value={n.id}>
+                    📍 {n.name}
+                  </option>
+                ))}
             </select>
           </div>
 
@@ -503,12 +510,17 @@ export const RealTimeFloodIntelligencePage: React.FC = () => {
         <div className="flex items-center gap-2 overflow-x-auto pb-1 text-[11px] pt-1">
           <span className="text-slate-400 text-[10px] font-bold uppercase shrink-0">Quick Hotspots:</span>
           {[
-            { label: 'T. Nagar (Commercial)', id: 'tnagar' },
-            { label: 'Velachery (Lake Basin)', id: 'velachery' },
-            { label: 'Adyar (Estuary)', id: 'adyar' },
-            { label: 'Tambaram (Mudichur)', id: 'tambaram' },
-            { label: 'Chennai (Entire District)', code: 'CHN', isDist: true },
-            { label: 'Tamil Nadu (Full State)', code: 'TN', isState: true }
+            { label: 'T. Nagar (Chennai)', id: 'tnagar' },
+            { label: 'Velachery (Chennai)', id: 'velachery' },
+            { label: 'R.S. Puram (Coimbatore)', id: 'cbe_rspuram' },
+            { label: 'Cuddalore Port', id: 'cuddalore' },
+            { label: 'Girivalam (Tiruvannamalai)', id: 'tvm_girivalam' },
+            { label: 'Vaigai (Madurai)', id: 'madurai_vaigai' },
+            { label: 'White Town (Puducherry)', id: 'pdy_white_town' },
+            { label: 'Karaikal Port', id: 'krk_port_coastal' },
+            { label: 'Coimbatore (Dist)', code: 'CBE', isDist: true },
+            { label: 'Chennai (Dist)', code: 'CHN', isDist: true },
+            { label: 'Tamil Nadu (State)', code: 'TN', isState: true }
           ].map((chip, idx) => (
             <button
               key={idx}

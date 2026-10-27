@@ -281,13 +281,39 @@ class LandUseIntelligenceService:
             cv2.circle(flood_mask, (int(w*0.35), int(h*0.6)), int(w*0.22), 255, -1)
             pts = np.array([[0, int(h*0.3)], [int(w*0.5), int(h*0.55)], [w, int(h*0.7)]], np.int32)
             cv2.polylines(flood_mask, [pts], False, 255, thickness=int(w*0.09))
-        elif "cuddalore" in nh_id or "cuddalore" in loc_name:
+        elif "cbe" in nh_id or "coimbatore" in loc_name or "noyyal" in nh_id:
+            # Noyyal river corridor & Ukkadam / Singanallur tank basins
+            pts = np.array([[0, int(h*0.48)], [int(w*0.45), int(h*0.52)], [int(w*0.75), int(h*0.46)], [w, int(h*0.55)]], np.int32)
+            cv2.polylines(flood_mask, [pts], False, 255, thickness=int(w*0.12))
+            cv2.circle(flood_mask, (int(w*0.38), int(h*0.58)), int(w*0.14), 255, -1)
+            cv2.circle(flood_mask, (int(w*0.72), int(h*0.42)), int(w*0.11), 255, -1)
+        elif "cuddalore" in nh_id or "cuddalore" in loc_name or "cud_" in nh_id:
             # Gadilam & Pennaiyar delta channels
             pts1 = np.array([[0, int(h*0.35)], [int(w*0.5), int(h*0.4)], [w, int(h*0.45)]], np.int32)
             pts2 = np.array([[0, int(h*0.7)], [int(w*0.5), int(h*0.65)], [w, int(h*0.6)]], np.int32)
             cv2.polylines(flood_mask, [pts1], False, 255, thickness=int(w*0.12))
             cv2.polylines(flood_mask, [pts2], False, 255, thickness=int(w*0.10))
             cv2.circle(flood_mask, (int(w*0.6), int(h*0.5)), int(w*0.18), 255, -1)
+        elif "tvm" in nh_id or "tiruvannamalai" in loc_name or "girivalam" in nh_id:
+            # Girivalam circular ring road depression & Cheyyar runoff channel
+            pts = np.array([[int(w*0.2), 0], [int(w*0.45), int(h*0.48)], [int(w*0.55), int(h*0.75)], [int(w*0.8), h]], np.int32)
+            cv2.polylines(flood_mask, [pts], False, 255, thickness=int(w*0.11))
+            cv2.circle(flood_mask, (int(w*0.48), int(h*0.45)), int(w*0.15), 255, -1)
+        elif "mdu" in nh_id or "madurai" in loc_name or "vaigai" in nh_id:
+            # Vaigai river course and Goripalayam / Vandiyur flood path
+            pts = np.array([[0, int(h*0.45)], [int(w*0.4), int(h*0.5)], [int(w*0.75), int(h*0.48)], [w, int(h*0.52)]], np.int32)
+            cv2.polylines(flood_mask, [pts], False, 255, thickness=int(w*0.15))
+            cv2.circle(flood_mask, (int(w*0.65), int(h*0.55)), int(w*0.14), 255, -1)
+        elif "pdy" in nh_id or "puducherry" in loc_name or "white_town" in nh_id:
+            # Promenade coastal fringe & Sankaraparani river basin
+            pts = np.array([[int(w*0.75), 0], [int(w*0.78), int(h*0.5)], [int(w*0.82), h]], np.int32)
+            cv2.polylines(flood_mask, [pts], False, 255, thickness=int(w*0.16))
+            cv2.circle(flood_mask, (int(w*0.45), int(h*0.65)), int(w*0.13), 255, -1)
+        elif "krk" in nh_id or "karaikal" in loc_name or "arasalar" in nh_id:
+            # Arasalar river estuary & Karaikal port basin
+            pts = np.array([[0, int(h*0.52)], [int(w*0.55), int(h*0.5)], [w, int(h*0.55)]], np.int32)
+            cv2.polylines(flood_mask, [pts], False, 255, thickness=int(w*0.15))
+            cv2.circle(flood_mask, (int(w*0.75), int(h*0.52)), int(w*0.18), 255, -1)
         else:
             # Generic drainage network based on luminance / natural contours
             gray = cv2.cvtColor(img_before, cv2.COLOR_BGR2GRAY)
@@ -567,9 +593,14 @@ class LandUseIntelligenceService:
             ("TN", "CHN", "velachery"),
             ("TN", "CHN", "adyar"),
             ("TN", "CHN", "tambaram"),
+            ("TN", "CBE", "cbe_rspuram"),
             ("TN", "CUD", "cuddalore"),
+            ("TN", "TVM", "tvm_girivalam"),
             ("TN", "MDU", "madurai_vaigai"),
+            ("PY", "PDY", "pdy_white_town"),
+            ("PY", "KRK", "krk_port_coastal"),
             ("TN", "CHN", None),
+            ("TN", "CBE", None),
             ("TN", None, None),
         ]
         for state_code, district_code, neighborhood_id in targets:
